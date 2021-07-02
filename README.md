@@ -125,7 +125,7 @@ from whole images to whole sentences. Not surprisingly, such models have a tende
 
   <img src="imgs/flickr30k_example.png" style="width:100%">
 
-  <figcaption>Figure 1 - Example annotations from our dataset. In each group of captions describing the same image, coreferent mentions (coreference chains) and their corresponding bounding boxes are marked with the same color. On the left, each chain points to a single entity (bounding box). Scenes and events like “outside” or “parade” have no box. In the middle example, the people (red) and flags (blue) chains point to multiple boxes each. On the right, blue phrases refer to the bride, and red phrases refer to the groom. The dark purple phrases (“a couple”) refer to both of these entities, and their corresponding bounding boxes are identical to the red and blue ones.</figcaption>
+  <figcaption>Figure 3 - Example annotations from our dataset. In each group of captions describing the same image, coreferent mentions (coreference chains) and their corresponding bounding boxes are marked with the same color. On the left, each chain points to a single entity (bounding box). Scenes and events like “outside” or “parade” have no box. In the middle example, the people (red) and flags (blue) chains point to multiple boxes each. On the right, blue phrases refer to the bride, and red phrases refer to the groom. The dark purple phrases (“a couple”) refer to both of these entities, and their corresponding bounding boxes are identical to the red and blue ones.</figcaption>
 </figure>
 </center>
 
