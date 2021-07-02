@@ -48,6 +48,8 @@ To remedy this possible drawback, the joint embedding of the high-level attentio
 
 
 **Faster R-CNN object class proposals reinforcement**  
+
+
 The standard decoding technique is known as greedy search which selects the most likely word at each step in the output sequence of the LSTM. This approach has the benefit that it is very fast, but the quality of the final output sequences may be far from optimal.
 
 Opposed to greedy search, beam search expands all possible next steps and keeps the **k** most likely, where **k** is a user-specified parameter and controls the number of beams or parallel searches through the sequence of probabilities.
