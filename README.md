@@ -88,7 +88,7 @@ I've included the scores produced by the state of the art models (on this datase
 | Hard attention (my implementation)                                                 | 66.54  | 45.8  | 31.6  | 20.93  |
 | Hard attention ResNet-101                                                          | 66.73  | 45.45  | 31.81  | 22.14  |
 | Panoptic Hard Attention LLAR                                                       | 56.52  | 39.42  | 28.34 | 11.14  |
-| Panoptic Hard Attention JE                                                         | **68.4**  |  **46.05** | **32.66** |  **22.78** |
+| Panoptic Hard Attention JE                                                         | **68.4**  |  **46.75** | **32.66** |  **22.78** |
 
 --- 
 </center>
