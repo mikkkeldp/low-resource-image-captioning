@@ -103,6 +103,7 @@ I've included the scores produced by the state of the art models (on this datase
  - [ ] Image caption augmentation
  - [ ] Use EfficientNet-B7 for encoding of low-level attention regions (Faster R-CNN bounding boxes) and extraction of feature maps for high-level attention regions.
  - [ ] Add second layer of LSTM
+ - [ ] Include additional evaluation metrics (CIDEr, METEOR, ROUGE-L, SPICE)
 
 
 
