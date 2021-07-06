@@ -35,7 +35,7 @@ class EncoderCNN(nn.Module):
             self.cnn = nn.Sequential(*list(inception.children())[:-5])
 
         if torch.cuda.is_available():
-                self.cnn.cuda()
+            self.cnn.cuda()
 
         # Resize image to fixed size to allow input images of variable size
         self.adaptive_pool = nn.AdaptiveAvgPool2d((encoded_image_size, encoded_image_size))
@@ -52,8 +52,8 @@ class EncoderCNN(nn.Module):
 
         with open("panoptic_feature_dict.pickle", 'rb') as f:
             self.segmentation_att_dict =  pickle.load(f)
-
-        self.bn = nn.BatchNorm1d(6, momentum=0.01)
+        self.num_feats = 202
+        self.bn = nn.BatchNorm1d(self.num_feats, momentum=0.01)
         
     def encoder_object_crop(self, img):
         
@@ -78,33 +78,37 @@ class EncoderCNN(nn.Module):
         feat_vecs = feat_vecs.permute(0, 2, 3, 1)  # (batch_size, encoded_image_size, encoded_image_size, 2048)
         feat_vecs = feat_vecs.view(bz, -1, encoder_size)
         
-        # Get faster r-cnn attention regions
-        object_feat_vecs = []
-        for id in ids:
-            with open("faster_rcnn_extracted_features/" + id + '_features.pickle', 'rb') as f:
-                fv_array = pickle.load(f)
-            object_feat_vecs.append(fv_array)
+        # # Get faster r-cnn attention regions
+        # object_feat_vecs = []
+    
+        # for id in ids:
+        #     with open("faster_rcnn_extracted_features/" + id + '_features.pickle', 'rb') as f:
+        #         fv_array = pickle.load(f)
+        #     object_feat_vecs.append(fv_array)
 
-            #combine high level and low level encodings
-        object_feat_vecs = torch.stack(object_feat_vecs)
-        object_feat_vecs = torch.squeeze(object_feat_vecs, 2)
-        feat_vecs = object_feat_vecs
+        # #combine high level and low level encodings
+        # object_feat_vecs = torch.stack(object_feat_vecs)
+        # object_feat_vecs = torch.squeeze(object_feat_vecs, 2)
+
 
 
         # Get PanopticFCN attention regions
-        # fvs = []
-        # for id in ids:
-        #     fv = self.segmentation_att_dict[id][0]
-        #     fvs.append(fv)
+        fvs = []
+        for id in ids:
+            fv = self.segmentation_att_dict[id][0]
+            fvs.append(fv)
 
-        # fvs = torch.stack(fvs)
-        # fvs = torch.squeeze(fvs, 1)
-        # fvs = fvs.to(self.device)
-        # fvs = self.bn(fvs)
-        # feat_vecs = fvs
+        fvs = torch.stack(fvs)
+        fvs = torch.squeeze(fvs, 1)
+        fvs = fvs.to(self.device)
+        fvs = self.linear(fvs)
+        # # fvs = self.bn(fvs)
+        
 
 
-        feat_vecs = torch.cat((feat_vecs, object_feat_vecs), dim=1)
+        feat_vecs = torch.cat((feat_vecs, fvs), dim=1)
+        self.num_feats = feat_vecs.shape[1]
+        feat_vecs = self.bn(feat_vecs)
 
         return feat_vecs
 

@@ -1,5 +1,13 @@
 # Panoptic Faster R-CNN Hard Attention Image Captioning with beam search object proposal reinforcement
 
+### Updates
+
+- **5/7/21**: Updated README TODO's and some grammar 
+- **6/7/21**: Experimented with beam-width (increased performance). Implemented Joint embedding between HLAR (achieved through conv layers) and LLAR computed by using PanopticFPN.
+
+
+
+
 The following is a list of proposed improvements on the Hard Attention model:
 - Introduce low-level attention regions by using the bounding boxes produced by the object detection and localization model Faster R-CNN model
 - Rescore the caption proposals during inference by utilizing beam search and reinforcing instances that contain object classes proposed by Faster R-CNN
@@ -73,8 +81,9 @@ I've included the scores produced by the state of the art models (on this datase
 
 | Abbreviation | Description |
 | ------       | ---------   |
-| JE        | Joint embedding of the high-level attention regions produced by the convolutional layers and the low-level features produced by Faster R-CNN, can also be explored. |
-| LLAR | Low level attention regions achieved through embedding the bounding boxes produced by Faster R-CNN|
+| JE        | Joint embedding of the high-level attention regions produced by the convolutional layers and the low-level features produced by Faster R-CNN, Mask R-CNN or PanopticFPN |
+| LLAR | Low level attention regions represented by object-level bounding boxes or segmentation achieved by Faster R-NN, Mask R-CNN or PanopticFPN |
+| F/M/P | Faster R-CNN, Mask R-CNN and PanopticFPN respectively - Models used for localizing and cropping object-level attention features (LLAR) |
 
 <center>
 
@@ -87,9 +96,9 @@ I've included the scores produced by the state of the art models (on this datase
 | Merge-EfficientNetB7-Glove-RV                                                      | 63.62  | 40.47  | 26.63  | 16.92  |
 | Hard attention (my implementation)                                                 | 66.54  | 45.8  | 31.6  | 20.93  |
 | Hard attention ResNet-101                                                          | 66.73  | 45.45  | 31.81  | 22.14  |
-| Panoptic Hard Attention LLAR                                                       | 56.52  | 39.42  | 28.34 | 11.14  |
-| Panoptic Hard Attention JE                                                         | **68.4**  |  **46.75** | **32.66** |  **22.78** |
-
+| Panoptic Hard Attention LLAR F                                                      | 56.52  | 39.42  | 28.34 | 11.14  |
+| Panoptic Hard Attention JE F                                                       | **68.74**  |  47.07 | 32.86 |  22.95 |
+| Panoptic Hard Attention JE P                                                       | 68.43  | **47.76**  | **33.63**| **24.42** |
 --- 
 </center>
 
@@ -97,13 +106,15 @@ I've included the scores produced by the state of the art models (on this datase
 ...
 
 ## TODO
- - [ ] Use segmentened attention regions from PantopicFPN (detectron2) as LLARs
+ - [x] Use segmented attention regions from PantopicFPN (detectron2) as LLARs
+ - [ ] Use segmented attention regions from Masked R-CNN as LLARs
  - [ ] Beam Search Faster R-CNN object class proposals reinforcement
  - [ ] Beam Search re-scoring by using language models
  - [ ] Image caption augmentation
+ - [ ] Attention visualization for sample inference
  - [ ] Use EfficientNet-B7 for encoding of low-level attention regions (Faster R-CNN bounding boxes) and extraction of feature maps for high-level attention regions.
  - [ ] Add second layer of LSTM
- - [ ] Experiment with different beam-search sizes
+ - [x] Experiment with different beam-search sizes
  - [ ] Include additional evaluation metrics (CIDEr, METEOR, ROUGE-L, SPICE)
 
 

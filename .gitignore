@@ -6,3 +6,4 @@ data/vocab.pkl
 glove.6B.200d.txt
 test_features.py
 faster_rcnn_extracted_features
+panoptic_feature_dict.pickle

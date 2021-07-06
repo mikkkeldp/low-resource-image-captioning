@@ -72,8 +72,8 @@ def main(args):
     #load weights from model if scratch_training is False
     if args["scratch_training"] == "False":
         starting_epoch = int(args["starting_epoch"])
-        encoder.load_state_dict(torch.load("./trained_models/encoder-"+ starting_epoch + ".ckpt"))
-        decoder.load_state_dict(torch.load("./trained_models/decoder-"+ starting_epoch + ".ckpt"))
+        encoder.load_state_dict(torch.load("./trained_models/encoder-"+ str(starting_epoch) + ".ckpt"))
+        decoder.load_state_dict(torch.load("./trained_models/decoder-"+ str(starting_epoch) + ".ckpt"))
 
     
     # init loss and optimizer
@@ -87,8 +87,9 @@ def main(args):
     losses = []
     not_improved = 0
     # Train the models
-    total_step = len(data_loader)
+    
     for epoch in range(starting_epoch, starting_epoch+ int(args["num_epochs"])):
+        total_step = len(data_loader)
         for i, (images, captions, lengths, ids) in enumerate(data_loader):
 
             # Set mini-batch dataset
@@ -114,6 +115,7 @@ def main(args):
             decoder.zero_grad()
             encoder.zero_grad()
             loss.backward(retain_graph=True)
+            optimizer.step()
             scheduler.step()
 
             # Print log info

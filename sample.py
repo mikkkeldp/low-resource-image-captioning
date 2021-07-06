@@ -73,20 +73,23 @@ def main(args):
     decoder = decoder.to(device)
 
     # Load the trained model parameters
-    encoder.load_state_dict(torch.load(args["encoder_path"]))
-    decoder.load_state_dict(torch.load(args["decoder_path"]))
+    encoder.load_state_dict(torch.load(args["encoder_path"]), strict=False)
+    decoder.load_state_dict(torch.load(args["decoder_path"]), strict=False)
 
     # Prepare an image
     image = load_image(args["image"], transform)
     image_tensor = image.to(device)
-    ids = ["id"]
+
+    id = args["image"].split("/")[-1]
+    id = id.split(".")[0]
+    ids = [id]
     # Generate an caption from the image
     features = encoder(image_tensor, int(args["batch_size"]), int(args["encoder_size"]), ids)
 
     # get generated caption and attention locations
-    sampled_seqs, complete_seqs_loc, alphas = decoder.sample(features, vocab, int(args["batch_size"]), int(args["encoder_size"]), device)
+    sampled_seqs, complete_seqs_loc = decoder.sample_beam_search(features, vocab, device, beam_size=int(args["beam_size"]))
 
-    print(complete_seqs_loc)
+    # print(complete_seqs_loc)
 
 
 
@@ -107,7 +110,7 @@ def main(args):
         if word == '<end>':
             break
     sentence = ' '.join(sampled_caption)
-
+    print(sentence)
 
     img_dim = 244
     attention_index = []

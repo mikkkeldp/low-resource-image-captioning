@@ -66,8 +66,8 @@ def main(args):
 
 
     # Load the trained model parameters
-    encoder.load_state_dict(torch.load(args["encoder_path"]))
-    decoder.load_state_dict(torch.load(args["decoder_path"]))
+    encoder.load_state_dict(torch.load(args["encoder_path"]), strict=False)
+    decoder.load_state_dict(torch.load(args["decoder_path"]), strict=False)
     
     ground_truth = []
     predicted = []
@@ -78,7 +78,7 @@ def main(args):
         # Set mini-batch dataset
         images = images.to(device)
         features = encoder(images,int(args["batch_size"]), int(args["encoder_size"]), ids)
-        sampled_seq, _ = decoder.sample_beam_search(features, vocab, device)
+        sampled_seq, _ = decoder.sample_beam_search(features, vocab, device, beam_size=int(args["beam_size"]))
         
         sampled_seq = sampled_seq[0][1:-1]
         captions = [c[1:-1] for c in captions[0]]
