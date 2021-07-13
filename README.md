@@ -4,7 +4,7 @@
 
 - **5/7/21**: Updated README TODO's and some grammar 
 - **6/7/21**: Experimented with beam-width (increased performance). Implemented Joint embedding between HLAR (achieved through conv layers) and LLAR computed by using **PanopticFPN**.
-- **10/7/21**: Implemented Beam-search object class rescoring for both object proposals of PanopticFPN and Faster R-CNN (Something wrong with implementation - reimplementation is needed).
+- **10/7/21**: Implemented Beam-search object class rescoring for both object proposals of PanopticFPN and Faster R-CNN (Lowered accuracies - Further investigation needed).
 - **13/7/21**: Implemented Beam-search language modelling rescoring using BERT. (Beam-width and language model influence not optimized).
 
 
@@ -85,6 +85,7 @@ I've included the scores produced by the state of the art models (on this datase
 | JE        | Joint embedding of the high-level attention regions produced by the convolutional layers and the low-level features produced by Faster R-CNN, Mask R-CNN or PanopticFPN |
 | LLAR | Low level attention regions represented by object-level bounding boxes or segmentation achieved by Faster R-NN, Mask R-CNN or PanopticFPN |
 | F/M/P | Faster R-CNN, Mask R-CNN and PanopticFPN respectively - Models used for localizing and cropping object-level attention features (LLAR) |
+| OR    | Indicates object class proposals reinforcement was implemented |
 | BERT | Language model used to rescore beam instances |
 
 <center>
@@ -103,6 +104,7 @@ I've included the scores produced by the state of the art models (on this datase
 | Panoptic Hard Attention BERT                                                       |  tbd |  tbd | tbd | tbd |
 | Panoptic Hard Attention JE-F                                                       | 68.74  |  47.07 | 32.86 |  22.95 |
 | Panoptic Hard Attention JE-P                                                       | 68.43  | 47.77  | 33.63 | 24.42 |
+| Panoptic Hard Attention JE-P-OR                                                     | 66.05  | 45.64  | 31.68 | 22.05 |
 | Panoptic Hard Attention JE-P-BERT                                                  |  68.83 |  48.02 | 33.84 | 24.79 |
 <!-- | Panoptic Hard Attention JE-P-BERT                                                  |  69.03 |  48.32 | 33.94 | 24.79 | -->
 --- 
