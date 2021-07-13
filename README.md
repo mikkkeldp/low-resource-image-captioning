@@ -105,8 +105,7 @@ I've included the scores produced by the state of the art models (on this datase
 | Panoptic Hard Attention JE-F                                                       | 68.74  |  47.07 | 32.86 |  22.95 |
 | Panoptic Hard Attention JE-P                                                       | 68.43  | 47.77  | 33.63 | 24.42 |
 | Panoptic Hard Attention JE-P-OR                                                     | 66.05  | 45.64  | 31.68 | 22.05 |
-| Panoptic Hard Attention JE-P-BERT                                                  |  68.83 |  48.02 | 33.84 | 24.79 |
-<!-- | Panoptic Hard Attention JE-P-BERT                                                  |  69.03 |  48.32 | 33.94 | 24.79 | -->
+| Panoptic Hard Attention JE-P-BERT                                                  |  **69.03** |  **48.32** | **33.94** | **24.79** |
 --- 
 </center>
 
