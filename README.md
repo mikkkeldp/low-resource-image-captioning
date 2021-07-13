@@ -84,7 +84,7 @@ I've included the scores produced by the state of the art models (on this datase
 | ------       | ---------   |
 | JE        | Joint embedding of the high-level attention regions produced by the convolutional layers and the low-level features produced by Faster R-CNN, Mask R-CNN or PanopticFPN |
 | LLAR | Low level attention regions represented by object-level bounding boxes or segmentation achieved by Faster R-NN, Mask R-CNN or PanopticFPN |
-| F/M/P | Faster R-CNN, Mask R-CNN and PanopticFPN respectively - Models used for localizing and cropping object-level attention features (LLAR) |
+| F/M/P | Faster R-CNN, Mask R-CNN and PanopticFPN respectively - Models used for localizing and cropping object-level attention features (LLAR), as well as object proposals used within rescoring during beam search.|
 | OR    | Indicates object class proposals reinforcement was implemented |
 | BERT | Language model used to rescore beam instances |
 
@@ -104,7 +104,8 @@ I've included the scores produced by the state of the art models (on this datase
 | Panoptic Hard Attention BERT                                                       |  tbd |  tbd | tbd | tbd |
 | Panoptic Hard Attention JE-F                                                       | 68.74  |  47.07 | 32.86 |  22.95 |
 | Panoptic Hard Attention JE-P                                                       | 68.43  | 47.77  | 33.63 | 24.42 |
-| Panoptic Hard Attention JE-P-OR                                                     | 66.05  | 45.64  | 31.68 | 22.05 |
+| Panoptic Hard Attention JE-P-OR-P                                                    | 66.89  | 45.93  | 32.18 | 22.45 |
+  | Panoptic Hard Attention JE-P-OR-F                                                   | 66.05  | 45.64  | 31.68 | 22.05 |
 | Panoptic Hard Attention JE-P-BERT                                                  |  **69.03** |  **48.32** | **33.94** | **24.79** |
 --- 
 </center>
@@ -116,11 +117,11 @@ I've included the scores produced by the state of the art models (on this datase
  - [x] Implement segmented attention regions from Faster R-CNN as LLARs
  - [x] Implement segmented attention regions from PantopicFPN (detectron2) as LLARs
  - [ ] Implement segmented attention regions from Masked R-CNN as LLARs
- - [ ] Beam Search Faster R-CNN object class proposals reinforcement (using Faster R-CNN proposals)
- - [ ] Beam Search Faster R-CNN object class proposals reinforcement (using PanopticFPN proposals)
- - [ ] Beam Search re-scoring by using language models
+ - [x] Beam Search Faster R-CNN object class proposals reinforcement (using Faster R-CNN proposals)
+ - [x] Beam Search Faster R-CNN object class proposals reinforcement (using PanopticFPN proposals)
+ - [x] Beam Search re-scoring by using language models
  - [ ] Run GridSearch on beam-width and language model influence parameter
- - [ ] Image caption augmentation
+ - [ ] Caption augmentation using language models
  - [ ] Attention visualization for sample inference
  - [ ] Use EfficientNet-B7 for encoding of low-level attention regions (Faster R-CNN bounding boxes) and extraction of feature maps for high-level attention regions.
  - [ ] Add second layer of LSTM
