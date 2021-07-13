@@ -20,7 +20,7 @@ class Flickr8k(object):
             captions[name].append(cap)
 
         self.captions = captions
-
+        self.counter = None
 
 class Vocabulary(object):
     """Simple vocabulary wrapper."""
@@ -55,17 +55,18 @@ def build_vocab(args):
             tokens = nltk.tokenize.word_tokenize(i.lower())
             counter.update(tokens)
         cnt+=1
-
+    
     # If the word frequency is less than 'threshold', then the word is discarded.
     words = [word for word, cnt in counter.items() if cnt >= int(args["threshold"])]
-
+    
     # Create a vocab wrapper and add some special tokens.
     vocab = Vocabulary()
     vocab.add_word('<pad>')
     vocab.add_word('<start>')
     vocab.add_word('<end>')
     vocab.add_word('<unk>')
-
+    vocab.counter = counter
+    print(counter)
     # Add the words to the vocabulary.
     for i, word in enumerate(words):
         vocab.add_word(word)

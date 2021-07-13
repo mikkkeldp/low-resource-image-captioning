@@ -24,7 +24,7 @@ def main(args):
     # resize image to desired shape for CNN, normalize rgb values and randomize flip
     transform = transforms.Compose([
                             transforms.Resize(256),
-                            transforms.CenterCrop(224),
+                            transforms.CenterCrop(244),
                             transforms.ToTensor(),
                             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                         ])
@@ -98,7 +98,7 @@ def main(args):
             lengths = lengths.to(device)
 
             # Forward, backward and optimize
-            features = encoder(images, int(args["batch_size"]), int(args["encoder_size"]), ids)
+            features, ids = encoder(images, int(args["batch_size"]), int(args["encoder_size"]), ids)
             features = features.to(device)
             scores, captions, lengths, alphas = decoder(features, captions, lengths, device)
 
@@ -116,7 +116,7 @@ def main(args):
             encoder.zero_grad()
             loss.backward(retain_graph=True)
             optimizer.step()
-            scheduler.step()
+            # scheduler.step()
 
             # Print log info
             if (i+1) % int(args["log_step"]) == 0:

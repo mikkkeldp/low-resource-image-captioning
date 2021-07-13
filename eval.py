@@ -77,8 +77,8 @@ def main(args):
         
         # Set mini-batch dataset
         images = images.to(device)
-        features = encoder(images,int(args["batch_size"]), int(args["encoder_size"]), ids)
-        sampled_seq, _ = decoder.sample_beam_search(features, vocab, device, beam_size=int(args["beam_size"]))
+        features, ids = encoder(images,int(args["batch_size"]), int(args["encoder_size"]), ids)
+        sampled_seq, _ = decoder.sample_beam_search(features, vocab, device, beam_size=int(args["beam_size"]), ids=ids, object_reinforcement=args["object_reinforce"], lm_rescoring=args["language_rescoring"])
         
         sampled_seq = sampled_seq[0][1:-1]
         captions = [c[1:-1] for c in captions[0]]

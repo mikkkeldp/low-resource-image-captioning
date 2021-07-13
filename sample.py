@@ -112,57 +112,57 @@ def main(args):
     sentence = ' '.join(sampled_caption)
     print(sentence)
 
-    img_dim = 244
-    attention_index = []
-    for t in range(len(sentence.split(" "))+1):
-        current_alpha = alphas[0][t, :].cpu().detach().numpy()
-        max_indx = np.argmax(current_alpha)
-        attention_index.append(max_indx)
+    # img_dim = 244
+    # attention_index = []
+    # for t in range(len(sentence.split(" "))+1):
+    #     current_alpha = alphas[0][t, :].cpu().detach().numpy()
+    #     max_indx = np.argmax(current_alpha)
+    #     attention_index.append(max_indx)
 
-    attention_index = attention_index
-
-
-
-    # # plot attention
-
-    # ### TODO shifted location entries by 7
-
-    split_sentence = sentence.split(" ")
-    # split_sentence = split_sentence[]
-
-    print("Caption: ", " ".join(split_sentence[1:-1]))
-    im =  cv2.imread(args["image"])
-
-    if len(split_sentence) % 4 == 0:
-        rows = int(len(split_sentence)/4)
-    else:
-        rows = int(len(split_sentence)/4) + 1
-
-    cols = 4
-    fig, axis = plt.subplots(rows,cols, figsize=(10,10))
-
-    ind = 0
-    for r in range(rows):
-        for c in range(cols):
-            if ind < len(split_sentence):
-                # shift location by 7
-                x, y = get_coords(im, attention_index[ind])
-                overlay = im.copy()
-                cv2.circle(overlay, (x,y), 60, (255, 255, 255), -1)
-                # cv2.rectangle(overlay, (x, y), (x+w, y+h), (0, 200, 0), -1)  # A filled rectangle
-                image_new = cv2.addWeighted(overlay, 0.8, im, 1 - 0.8, 0)
-                axis[r][c].imshow(np.asarray(cv2.cvtColor(image_new, cv2.COLOR_BGR2RGB)))
-                im =  cv2.imread(args["image"])
-                axis[r][c].axis("off")
-                axis[r][c].title.set_text(split_sentence[ind])
-                ind += 1
-            else:
-               axis[r][c].axis("off")
+    # attention_index = attention_indexcl
 
 
 
+    # # # plot attention
 
-    plt.show()
+    # # ### TODO shifted location entries by 7
+
+    # split_sentence = sentence.split(" ")
+    # # split_sentence = split_sentence[]
+
+    # print("Caption: ", " ".join(split_sentence[1:-1]))
+    # im =  cv2.imread(args["image"])
+
+    # if len(split_sentence) % 4 == 0:
+    #     rows = int(len(split_sentence)/4)
+    # else:
+    #     rows = int(len(split_sentence)/4) + 1
+
+    # cols = 4
+    # fig, axis = plt.subplots(rows,cols, figsize=(10,10))
+
+    # ind = 0
+    # for r in range(rows):
+    #     for c in range(cols):
+    #         if ind < len(split_sentence):
+    #             # shift location by 7
+    #             x, y = get_coords(im, attention_index[ind])
+    #             overlay = im.copy()
+    #             cv2.circle(overlay, (x,y), 60, (255, 255, 255), -1)
+    #             # cv2.rectangle(overlay, (x, y), (x+w, y+h), (0, 200, 0), -1)  # A filled rectangle
+    #             image_new = cv2.addWeighted(overlay, 0.8, im, 1 - 0.8, 0)
+    #             axis[r][c].imshow(np.asarray(cv2.cvtColor(image_new, cv2.COLOR_BGR2RGB)))
+    #             im =  cv2.imread(args["image"])
+    #             axis[r][c].axis("off")
+    #             axis[r][c].title.set_text(split_sentence[ind])
+    #             ind += 1
+    #         else:
+    #            axis[r][c].axis("off")
+
+
+
+
+    # plt.show()
 
 if __name__ == '__main__':
     config = configparser.ConfigParser()

@@ -6,8 +6,13 @@ import torchvision.transforms as transforms
 import pickle
 from PIL import Image
 import numpy as np
-
+from efficientnet_pytorch import EfficientNet
 from get_faster_rcnn_features import get_prediction
+from torchsummary import summary
+from nltk.corpus import wordnet as wn
+import nltk
+from language_model_rescoring import get_score
+nltk.download('wordnet')
 
 
 class EncoderCNN(nn.Module):
@@ -17,15 +22,15 @@ class EncoderCNN(nn.Module):
         self.device = device
         self.transform = transforms.Compose([
                             transforms.Resize(256),
-                            transforms.CenterCrop(224),
+                            transforms.CenterCrop(244),
                             transforms.ToTensor(),
                             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                         ])
-        
+
         if cnn == "vgg":
             vgg = models.vgg19(pretrained=True)
             self.cnn = nn.Sequential(*list(vgg.features.children())[:43])
-
+            # summary(vgg)
         elif cnn == "resnet":
             resnet = models.resnet152(pretrained=True)  ##maybe try 152/101?
             self.cnn = nn.Sequential(*list(resnet.children())[:-3])
@@ -33,6 +38,13 @@ class EncoderCNN(nn.Module):
         elif cnn == "inception":
             inception = models.inception_v3(pretrained=True)
             self.cnn = nn.Sequential(*list(inception.children())[:-5])
+            # summary(inception)
+
+        elif cnn == "efficient": # Not yet functional
+            resnet = models.resnet152(pretrained=True)  ##maybe try 152/101?
+            efficient =  EfficientNet.from_pretrained('efficientnet-b6',include_top = False)
+            # summary(efficient, (3,244,244))
+            self.cnn = nn.Sequential(*list(efficient.children())[:-3])
 
         if torch.cuda.is_available():
             self.cnn.cuda()
@@ -72,7 +84,7 @@ class EncoderCNN(nn.Module):
         # Get feature map attention regions (high level)
         with torch.no_grad(): #freeze layer weights
             feat_vecs = self.cnn(images)  # (batch_size, encoder_size, feature_map size, feature_map size)
-        
+
         bz = len(images)
         feat_vecs = self.adaptive_pool(feat_vecs)  # (batch_size, 2048, encoded_image_size, encoded_image_size)
         feat_vecs = feat_vecs.permute(0, 2, 3, 1)  # (batch_size, encoded_image_size, encoded_image_size, 2048)
@@ -90,8 +102,6 @@ class EncoderCNN(nn.Module):
         # object_feat_vecs = torch.stack(object_feat_vecs)
         # object_feat_vecs = torch.squeeze(object_feat_vecs, 2)
 
-
-
         # Get PanopticFCN attention regions
         fvs = []
         for id in ids:
@@ -102,15 +112,13 @@ class EncoderCNN(nn.Module):
         fvs = torch.squeeze(fvs, 1)
         fvs = fvs.to(self.device)
         fvs = self.linear(fvs)
-        # # fvs = self.bn(fvs)
+        # fvs = self.bn(fvs)
         
-
-
         feat_vecs = torch.cat((feat_vecs, fvs), dim=1)
         self.num_feats = feat_vecs.shape[1]
         feat_vecs = self.bn(feat_vecs)
 
-        return feat_vecs
+        return feat_vecs, ids
 
 
 class Attention(nn.Module):
@@ -159,6 +167,16 @@ class DecoderRNNWithAttention(nn.Module):
         self.vocab_size = vocab_size
         self.max_seg_length = max_seg_length
 
+
+
+    def wordNetSimilarity(self, word1, word2):
+        wordFromList1 = wn.synsets(word1)
+        wordFromList2 = wn.synsets(word2)
+        if wordFromList1 and wordFromList2:
+            return wordFromList1[0].wup_similarity(wordFromList2[0])
+        else:
+            return -1
+
     def init_weights(self):
         """Initialize the weights of learnable layers"""
         self.embed.weight.data.uniform_(-0.1,0.1)
@@ -178,7 +196,7 @@ class DecoderRNNWithAttention(nn.Module):
     def forward(self, encoder_out, captions, lengths, device):
         """Decode image feature vectors and generates captions."""
         batch_size, encoder_size, vocab_size = encoder_out.size(0), encoder_out.size(-1), self.vocab_size
-       
+
         num_pixels = encoder_out.size(1) #number of feature maps (196 for vgg) - 14x14
         embeddings = self.embed(captions) # (batch_size, max_caption_length, embed_size)
 
@@ -240,12 +258,16 @@ class DecoderRNNWithAttention(nn.Module):
         return sampled_ids, complete_seqs_loc, alphas
 
 
-    def sample_beam_search(self, encoder_out, vocab, device, beam_size=4):
+    def sample_beam_search(self, encoder_out, vocab, device, beam_size=4, ids=[], object_reinforcement = "False", lm_rescoring = "False"):
         k = beam_size
         vocab_size = len(vocab)
         encoder_size = encoder_out.size(-1)
         encoder_out = encoder_out.view(1, -1, encoder_size)
         num_pixels = encoder_out.size(1)
+        id = ids[0]
+        with open("./panoptic_class_proposals/" + id + "_classes.pickle", 'rb') as f:
+            classes = pickle.load(f)
+        classes = np.unique(classes)
 
         encoder_out = encoder_out.expand(k, num_pixels, encoder_size)  # (k, num_pixels, encoder_dim)
         k_prev_words = torch.LongTensor([[vocab('<start>')]] * k).to(device)  # (k, 1)
@@ -256,6 +278,10 @@ class DecoderRNNWithAttention(nn.Module):
         complete_seqs_loc = []
         hidden, cell = self.init_hidden_state(encoder_out)
         step = 1
+        # words_not_to_include = ["this", "many", "this"]
+        # nouns  = {x.name().split('.', 1)[0] for x in wn.all_synsets('n')}
+        sentences_already_scored = []
+
         while True:
             embeddings = self.embed(k_prev_words).squeeze(1)
             awe, alpha = self.attention(encoder_out, hidden)
@@ -270,6 +296,7 @@ class DecoderRNNWithAttention(nn.Module):
             scores = top_k_scores.expand_as(scores) + scores
 
             # For the first step, all k points will have the same scores (since same k previous words, h, c)
+
             if step == 1:
                 top_k_scores, top_k_words = scores[0].topk(k, dim=0)  # (s)
             else:
@@ -291,6 +318,51 @@ class DecoderRNNWithAttention(nn.Module):
             if len(complete_inds) > 0:
                 complete_seqs.extend(seqs[complete_inds].tolist())
                 complete_seqs_scores.extend(top_k_scores[complete_inds])
+                
+
+                # #language model rescoring
+                if lm_rescoring == "True":
+                    for i in range(len(complete_seqs)):
+                        sentence_ids = complete_seqs[i]
+                        if sentence_ids not in sentences_already_scored: #only rescore beam instance once
+                        
+                            sentence = [vocab.idx2word[enc] for enc in sentence_ids ]
+                            sentence = sentence[1:-2]
+                            sentence = " ".join(sentence)
+                            score = get_score(sentence)
+                            sentences_already_scored.append(sentence_ids)
+
+                            complete_seqs_scores[i] = complete_seqs_scores[i].cpu().detach().numpy()
+                            complete_seqs_scores[i] = complete_seqs_scores[i] - score*0.5
+                            complete_seqs_scores[i] = torch.tensor(complete_seqs_scores[i]).to(device)
+                 
+
+                # beam object rescoring 
+                if object_reinforcement == "True":
+                    for i in range(len(complete_seqs)):
+                        enforce = 1
+                        sent = complete_seqs[i]
+                        if sent not in sentences_already_scored: #only rescore beam instance once
+                            for enc in sent:
+                                try:
+                                    word = vocab.idx2word[enc]
+                                except:
+                                    word = "unknown"
+                                if vocab.counter[word] < 1000 and word != "unknown":
+                                    if word in classes:
+                                        enforce *= 0.7
+                                    else: #check if next word is a synonym of one of the classes
+                                        for c in classes:
+                                            c = c.replace(" ", "_")
+                                            if self.wordNetSimilarity(word, c) > 0.7:
+                                                enforce *= 0.8
+                                elif word == "unknown":
+                                    enforce *= 1
+                            if enforce != 1: 
+                                complete_seqs_scores[i] = complete_seqs_scores[i].cpu().detach().numpy()
+                                complete_seqs_scores[i] = complete_seqs_scores[i]*enforce
+                                complete_seqs_scores[i] = torch.tensor(complete_seqs_scores[i]).to(device)
+                    
             k -= len(complete_inds)  # reduce beam length accordingly
 
             # Proceed with incomplete sequences
@@ -306,7 +378,8 @@ class DecoderRNNWithAttention(nn.Module):
             if step > self.max_seg_length:
                 break
             step += 1
-
+        
         i = complete_seqs_scores.index(max(complete_seqs_scores))
         seq = complete_seqs[i]
+
         return [seq] , complete_seqs_loc

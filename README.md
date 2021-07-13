@@ -106,9 +106,11 @@ I've included the scores produced by the state of the art models (on this datase
 ...
 
 ## TODO
- - [x] Use segmented attention regions from PantopicFPN (detectron2) as LLARs
- - [ ] Use segmented attention regions from Masked R-CNN as LLARs
- - [ ] Beam Search Faster R-CNN object class proposals reinforcement
+ - [x] Implement segmented attention regions from Faster R-CNN as LLARs
+ - [x] Implement segmented attention regions from PantopicFPN (detectron2) as LLARs
+ - [ ] Implement segmented attention regions from Masked R-CNN as LLARs
+ - [ ] Beam Search Faster R-CNN object class proposals reinforcement (using Faster R-CNN proposals)
+ - [ ] Beam Search Faster R-CNN object class proposals reinforcement (using PanopticFPN proposals)
  - [ ] Beam Search re-scoring by using language models
  - [ ] Image caption augmentation
  - [ ] Attention visualization for sample inference

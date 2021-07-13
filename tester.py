@@ -41,9 +41,10 @@ def encoder_object_crop(img):
         return features
 
 
-mypath = "dataset/Flickr8k_Dataset/"
+# mypath = "dataset/Flickr8k_Dataset/"
+mypath = "./samples/"
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-onlyfiles = onlyfiles[2400:]
+
 
 for img in tqdm(onlyfiles):
     id = img.split(".")[0]
