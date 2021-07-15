@@ -101,7 +101,7 @@ I've included the scores produced by the state of the art models (on this datase
 | Hard attention ResNet-101                                                          | 66.73  | 45.45  | 31.81  | 22.14  |
 | Panoptic Hard Attention LLAR-F                                                     | 56.52  | 39.42  | 28.34 | 11.14  |
 | Panoptic Hard Attention LLAR-P                                                     | 57.41  | 40.98  | 28.84 | 11.74  |
-| Panoptic Hard Attention BERT                                                       |  tbd |  tbd | tbd | tbd |
+| Panoptic Hard Attention BERT                                                       | 67.67 |  46.56 | 32.35 | 22.40 |
 | Panoptic Hard Attention JE-F                                                       | 68.74  |  47.07 | 32.86 |  22.95 |
 | Panoptic Hard Attention JE-P                                                       | 68.43  | 47.77  | 33.63 | 24.42 |
 | Panoptic Hard Attention JE-P-OR-P                                                    | 66.89  | 45.93  | 32.18 | 22.45 |
