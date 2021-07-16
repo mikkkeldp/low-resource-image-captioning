@@ -107,7 +107,7 @@ I've included the scores produced by the state of the art models (on this datase
 | Hard Attention JE-P                                                       | 68.43  | 47.77  | 33.63 | 24.42 |
 | Hard Attention JE-P-BERT                                                  |  69.03 |  48.32 | 33.94 | 24.79 |
 | Hard Attention JE-P-CA                                                    | 69.52  | 48.91  | 34.83 | 25.36 | 
-| Hard Attention JE-P-CA                                                    | **69.98**  | **49.34**  | **34.99** | **25.86** | 
+| Hard Attention JE-P-CA                                                    | **69.98**  | **49.34**  | **35.02** | **25.86** | 
 --- 
 </center>
   
