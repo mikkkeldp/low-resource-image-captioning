@@ -6,7 +6,7 @@
 - **6/7/21**: Experimented with beam-width (increased performance). Implemented Joint embedding between HLAR (achieved through conv layers) and LLAR computed by using **PanopticFPN**.
 - **10/7/21**: Implemented Beam-search object class rescoring for both object proposals of PanopticFPN and Faster R-CNN (Lowered accuracies - Further investigation needed).
 - **13/7/21**: Implemented Beam-search language modelling rescoring using BERT. (Beam-width and language model influence not optimized).
-
+- **16/7/22**: Impletemented augmented captions through pharaphrase generation. Implementation details to be added. 
 
 
 The following is a list of proposed improvements on the Hard Attention model:
@@ -87,6 +87,7 @@ I've included the scores produced by the state of the art models (on this datase
 | F/M/P | Faster R-CNN, Mask R-CNN and PanopticFPN respectively - Models used for localizing and cropping object-level attention features (LLAR), as well as object proposals used within rescoring during beam search.|
 | OR    | Indicates object class proposals reinforcement was implemented |
 | BERT | Language model used to rescore beam instances |
+| CA | Indicates additional captions were generated through making use of paraphrase generation. Increased captions per image from 5 to 10. |
 
 <center>
 
@@ -99,13 +100,14 @@ I've included the scores produced by the state of the art models (on this datase
 | Merge-EfficientNetB7-Glove-RV                                                      | 63.62  | 40.47  | 26.63  | 16.92  |
 | Hard attention (my implementation)                                                 | 66.54  | 45.8  | 31.6  | 20.93  |
 | Hard attention ResNet-101                                                          | 66.73  | 45.45  | 31.81  | 22.14  |
+| Hard attention CA                                                                  | 67.57  | 47.32  | 32.97  | 22.94  |
+| Hard Attention BERT                                                                | 67.67 |  46.56 | 32.35 | 22.40 | 
 | Panoptic Hard Attention LLAR-F                                                     | 56.52  | 39.42  | 28.34 | 11.14  |
 | Panoptic Hard Attention LLAR-P                                                     | 57.41  | 40.98  | 28.84 | 11.74  |
-| Panoptic Hard Attention BERT                                                       | 67.67 |  46.56 | 32.35 | 22.40 |
 | Panoptic Hard Attention JE-F                                                       | 68.74  |  47.07 | 32.86 |  22.95 |
 | Panoptic Hard Attention JE-P                                                       | 68.43  | 47.77  | 33.63 | 24.42 |
 | Panoptic Hard Attention JE-P-OR-P                                                    | 66.89  | 45.93  | 32.18 | 22.45 |
-  | Panoptic Hard Attention JE-P-OR-F                                                   | 66.05  | 45.64  | 31.68 | 22.05 |
+| Panoptic Hard Attention JE-P-OR-F                                                   | 66.05  | 45.64  | 31.68 | 22.05 |
 | Panoptic Hard Attention JE-P-BERT                                                  |  **69.03** |  **48.32** | **33.94** | **24.79** |
 --- 
 </center>
