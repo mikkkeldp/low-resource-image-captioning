@@ -117,8 +117,8 @@ The following model variations did not improve the original implementation.
 |---------------------------------------------------------------|--------|--------|--------|--------|  
 | Hard Attention LLAR-F                                                     | 56.52  | 39.42  | 28.34 | 11.14  |
 | Hard Attention LLAR-P                                                     | 57.41  | 40.98  | 28.84 | 11.74  |
-| Hard Attention JE-P-OR-P                                                    | 66.89  | 45.93  | 32.18 | 22.45 |
-| Hard Attention JE-P-OR-F                                                   | 66.05  | 45.64  | 31.68 | 22.05 |
+| Hard Attention JE-P-OR                                                   | 66.89  | 45.93  | 32.18 | 22.45 |
+| Hard Attention JE-F-OR                                                  | 66.05  | 45.64  | 31.68 | 22.05 |
 
 ## Results discussion
 ...
@@ -131,7 +131,7 @@ The following model variations did not improve the original implementation.
  - [x] Beam Search Faster R-CNN object class proposals reinforcement (using PanopticFPN proposals)
  - [x] Beam Search re-scoring by using language models
  - [ ] Run GridSearch on beam-width and language model influence parameter
- - [ ] Caption augmentation using language models
+ - [x] Caption augmentation using language models
  - [ ] Attention visualization for sample inference
  - [ ] Use EfficientNet-B7 for encoding of low-level attention regions (Faster R-CNN bounding boxes) and extraction of feature maps for high-level attention regions.
  - [ ] Add second layer of LSTM
