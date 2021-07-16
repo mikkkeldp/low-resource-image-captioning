@@ -109,8 +109,8 @@ I've included the scores produced by the state of the art models (on this datase
 --- 
 </center>
   
+The following model variations did not improve the original implementation. 
   
-I have separated model variations that did not improve the original implementation of the Hard Attention model in order to improve readability.
 | Model                                                         | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
 |---------------------------------------------------------------|--------|--------|--------|--------|  
 | Hard Attention LLAR-F                                                     | 56.52  | 39.42  | 28.34 | 11.14  |
