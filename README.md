@@ -2,7 +2,7 @@
 
 ### Updates
 
-- **5/7/21**: Updated README TODO's and some grammar 
+- **5/7/21**: Updated README TODO's 
 - **6/7/21**: Experimented with beam-width (increased performance). Implemented Joint embedding between HLAR (achieved through conv layers) and LLAR computed by using **PanopticFPN**.
 - **10/7/21**: Implemented Beam-search object class rescoring for both object proposals of PanopticFPN and Faster R-CNN (Lowered accuracies - Further investigation needed).
 - **13/7/21**: Implemented Beam-search language modelling rescoring using BERT. (Beam-width and language model influence not optimized).
