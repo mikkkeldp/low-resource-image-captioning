@@ -20,6 +20,7 @@ class Flickr8kTrainDataset(data.Dataset):
 
         self.vocab = vocab
         self.transform = transform
+        #change this to 10 for augmented captions
         self.cpi = 5 # captions per image
 
     def __getitem__(self, index):

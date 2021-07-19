@@ -9,3 +9,5 @@ faster_rcnn_extracted_features
 panoptic_feature_dict.pickle
 wordnet_test.py
 panoptic_class_proposals
+tester.py
+wordnet_test.py

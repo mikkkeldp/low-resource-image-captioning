@@ -41,8 +41,8 @@ def encoder_object_crop(img):
         return features
 
 
-# mypath = "dataset/Flickr8k_Dataset/"
-mypath = "./samples/"
+mypath = "dataset/Flickr8k_Dataset/"
+
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
 

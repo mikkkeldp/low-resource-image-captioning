@@ -16,7 +16,7 @@ nltk.download('wordnet')
 
 
 class EncoderCNN(nn.Module):
-    def __init__(self, encoded_image_size, cnn, device):
+    def __init__(self, encoded_image_size, cnn, device, at):
         """Load the pretrained ResNet-101 and remove last layers."""
         super(EncoderCNN, self).__init__()
         self.device = device
@@ -64,9 +64,13 @@ class EncoderCNN(nn.Module):
 
         with open("panoptic_feature_dict.pickle", 'rb') as f:
             self.segmentation_att_dict =  pickle.load(f)
+
+        
         self.num_feats = 202
         self.bn = nn.BatchNorm1d(self.num_feats, momentum=0.01)
-        
+        self.at = at
+
+
     def encoder_object_crop(self, img):
         
         img = img.unsqueeze(0)
@@ -78,7 +82,7 @@ class EncoderCNN(nn.Module):
         return features
 
 
-    def forward(self, images, batch_size,encoder_size, ids):
+    def forward(self, images, batch_size, encoder_size, ids):
         """Extract feature vectors from input images."""
 
         # Get feature map attention regions (high level)
@@ -90,33 +94,38 @@ class EncoderCNN(nn.Module):
         feat_vecs = feat_vecs.permute(0, 2, 3, 1)  # (batch_size, encoded_image_size, encoded_image_size, 2048)
         feat_vecs = feat_vecs.view(bz, -1, encoder_size)
         
-        # # Get faster r-cnn attention regions
-        # object_feat_vecs = []
-    
-        # for id in ids:
-        #     with open("faster_rcnn_extracted_features/" + id + '_features.pickle', 'rb') as f:
-        #         fv_array = pickle.load(f)
-        #     object_feat_vecs.append(fv_array)
+        # Get faster r-cnn attention regions
+        if self.at == "fa":
+            fvs = []
+        
+            for id in ids:
+                with open("faster_rcnn_extracted_features/" + id + '_features.pickle', 'rb') as f:
+                    fv_array = pickle.load(f)
+                fvs.append(fv_array)
 
-        # #combine high level and low level encodings
-        # object_feat_vecs = torch.stack(object_feat_vecs)
-        # object_feat_vecs = torch.squeeze(object_feat_vecs, 2)
+            #combine high level and low level encodings
+            fvs = torch.stack(fvs)
+            fvs = torch.squeeze(fvs, 2)
 
         # Get PanopticFCN attention regions
-        fvs = []
-        for id in ids:
-            fv = self.segmentation_att_dict[id][0]
-            fvs.append(fv)
+        if self.at == "pa":
+            fvs = []
+            for id in ids:
+                fv = self.segmentation_att_dict[id][0]
+                fvs.append(fv)
 
-        fvs = torch.stack(fvs)
-        fvs = torch.squeeze(fvs, 1)
-        fvs = fvs.to(self.device)
-        fvs = self.linear(fvs)
-        # fvs = self.bn(fvs)
+            fvs = torch.stack(fvs)
+            fvs = torch.squeeze(fvs, 1)
+            fvs = fvs.to(self.device)
+            fvs = self.linear(fvs)
+
+            # fvs = self.bn(fvs)
         
-        feat_vecs = torch.cat((feat_vecs, fvs), dim=1)
-        self.num_feats = feat_vecs.shape[1]
-        feat_vecs = self.bn(feat_vecs)
+        if self.at != "None":
+            feat_vecs = torch.cat((feat_vecs, fvs), dim=1)
+            self.num_feats = feat_vecs.shape[1]
+            feat_vecs = self.bn(feat_vecs)
+
 
         return feat_vecs, ids
 
@@ -265,9 +274,10 @@ class DecoderRNNWithAttention(nn.Module):
         encoder_out = encoder_out.view(1, -1, encoder_size)
         num_pixels = encoder_out.size(1)
         id = ids[0]
-        with open("./panoptic_class_proposals/" + id + "_classes.pickle", 'rb') as f:
-            classes = pickle.load(f)
-        classes = np.unique(classes)
+        if object_reinforcement == "True":
+            with open("./panoptic_class_proposals/" + id + "_classes.pickle", 'rb') as f:
+                classes = pickle.load(f)
+            classes = np.unique(classes)
 
         encoder_out = encoder_out.expand(k, num_pixels, encoder_size)  # (k, num_pixels, encoder_dim)
         k_prev_words = torch.LongTensor([[vocab('<start>')]] * k).to(device)  # (k, 1)

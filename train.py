@@ -64,7 +64,7 @@ def main(args):
                 i+=1
 
     # init the encoder and decoder models
-    encoder = EncoderCNN(int(args["encoded_image_size"]), args["cnn"], device).to(device)
+    encoder = EncoderCNN(int(args["encoded_image_size"]), args["cnn"], device, args["at"]).to(device)
     decoder = DecoderRNNWithAttention(int(args["embed_size"]), int(args["attention_size"]), int(args["hidden_size"]), len(vocab), encoder_size=int(args["encoder_size"]), glove = args["glove"], embedding_matrix = embedding_matrix).to(device)
     
     starting_epoch = 0
@@ -99,7 +99,7 @@ def main(args):
 
             # Forward, backward and optimize
             features, ids = encoder(images, int(args["batch_size"]), int(args["encoder_size"]), ids)
-            features = features.to(device)
+            # features = features.to(device)
             scores, captions, lengths, alphas = decoder(features, captions, lengths, device)
 
             targets = captions[:, 1:] #remove start token
@@ -138,8 +138,8 @@ def main(args):
             lengths = lengths.to(device)
 
             # Forward, backward and optimize
-            features = encoder(images, int(args["batch_size"]), int(args["encoder_size"]), ids)
-            features = features.to(device)
+            features, ids = encoder(images, int(args["batch_size"]), int(args["encoder_size"]), ids)
+            # features = features.to(device)
             # print("F: ", features.shape)
             scores, captions, lengths, alphas = decoder(features, captions, lengths, device)
 

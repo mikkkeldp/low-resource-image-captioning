@@ -59,9 +59,7 @@ def main(args):
 
 
     # Build models
-    encoder = EncoderCNN(int(args["encoded_image_size"]), args["cnn"],device).eval().to(device)  # eval mode (batchnorm uses moving mean/variance)
-
-
+    encoder = EncoderCNN(int(args["encoded_image_size"]), args["cnn"],device, args["at"]).eval().to(device)  # eval mode (batchnorm uses moving mean/variance)
     decoder = DecoderRNNWithAttention(int(args["embed_size"]), int(args["attention_size"]), int(args["hidden_size"]), len(vocab), encoder_size=int(args["encoder_size"]), glove = args["glove"], embedding_matrix = embedding_matrix).eval().to(device)
 
 
