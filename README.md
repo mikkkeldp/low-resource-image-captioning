@@ -7,6 +7,7 @@
 - **10/7/21**: Implemented Beam-search object class rescoring for both object proposals of PanopticFPN and Faster R-CNN (Lowered accuracies - Further investigation needed).
 - **13/7/21**: Implemented Beam-search language modelling rescoring using BERT. (Beam-width and language model influence not optimized).
 - **16/7/22**: Impletemented augmented captions through pharaphrase generation. Implementation details to be added. 
+- **18/7/22**: Added config parameters to toggle between attention regions, language modelling rescoring, as well as object reinforcement and caption augmentation.
 
 
 The following is a list of proposed improvements on the Hard Attention model:
