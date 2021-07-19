@@ -1,4 +1,4 @@
-# Panoptic Faster R-CNN Hard Attention Image Captioning with beam search object proposal reinforcement
+# Panoptic Hard Attention Image Captioning with beam search object proposal reinforcement, language model rescoring and caption augmentation
 
 ### Updates
 
